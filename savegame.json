@@ -1,0 +1,34 @@
+{
+    "turn_number": 3,
+    "nation": {
+        "name": "Japan",
+        "population": 118331600,
+        "public_approval": 59.0,
+        "gdp": 1308.1949550750003,
+        "national_debt": 0.0,
+        "inflation_rate": 2.0,
+        "military_strength": 530.0,
+        "political_stability": 90.5,
+        "intelligence_budget": 5.0,
+        "espionage_network": 50.0,
+        "factions": {},
+        "history": [
+            {
+                "year": 1,
+                "directive": "Allocate $25 million to invest into semiconductor development we will call this fund the FABLAW ACT of 1980"
+            },
+            {
+                "year": 1,
+                "directive": "tax the people earning more than $1 million, and convert those taxes to Universal Free healthcare, we will call it Unihealth Program ACT"
+            },
+            {
+                "year": 2,
+                "directive": "Held diplomatic negotiations with [United States]."
+            },
+            {
+                "year": 3,
+                "directive": "[CLASSIFIED] Conducted covert op against [Soviet Union]: [Infiltrate Naval Shipyards Using a chinese fisherman]"
+            }
+        ]
+    }
+}

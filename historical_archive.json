@@ -1,0 +1,68 @@
+{
+    "United States-1980": {
+        "population": 226000000,
+        "gdp": 2859.0,
+        "military_strength": 960.0,
+        "political_stability": 85.0,
+        "briefing": "The United States stands as the world's premier economic power, but faces rising inflation and a tense Cold War standoff with the Soviet Union."
+    },
+    "Japan-1980": {
+        "population": 116000000,
+        "gdp": 1150.0,
+        "military_strength": 530.0,
+        "political_stability": 90.0,
+        "briefing": "Japan is experiencing an unprecedented 'Economic Miracle,' rapidly becoming a global leader in technology and automotive manufacturing."
+    },
+    "Germany-1920": {
+        "population": 60000000,
+        "gdp": 18.5,
+        "military_strength": 120.0,
+        "political_stability": 25.0,
+        "briefing": "Herr Kanzler, you inherit a nation in profound crisis. The ink on the Treaty of Versailles is barely dry, yet its oppressive clauses already suffocate us: staggering reparations payments, the loss of vital industrial and agricultural territories, and the emasculation of our once-proud military. France, in particular, remains unyielding in its demands, exacerbating our economic woes and fueling a pervasive sense of national humiliation. We stand isolated on the international stage, our borders vulnerable and our voice diminished, while the Allied occupation of the Rhineland serves as a constant reminder of our defeat.\n\nDomestically, the situation is equally perilous. The nascent Weimar Republic struggles for legitimacy, having narrowly survived the recent Kapp Putsch in March, a stark warning of the powerful right-wing elements yearning for a return to authoritarianism. Communist agitation from the left also threatens to plunge our cities into chaos, as economic hardship \u2013 rampant unemployment, a rapidly devaluing currency, and shortages of basic necessities \u2013 breeds widespread discontent. Your immediate challenge is to steer a fractured Germany between the Scylla of foreign demands and the Charybdis of internal revolution, all while attempting to rebuild a shattered economy and restore a semblance of national pride."
+    },
+    "Philippines -1950": {
+        "population": 20000000,
+        "gdp": 2.0,
+        "military_strength": 150.0,
+        "political_stability": 45.0,
+        "briefing": "Good morning, Mr. President. The newly independent Republic of the Philippines stands at a pivotal juncture in 1950. Globally, the shadows of the Cold War lengthen, with the recent communist victory in China and the outbreak of war in Korea underscoring the ideological struggle shaping Asia. Our young nation maintains strong strategic and economic ties with the United States, a critical alliance for our security and recovery. However, internally, our sovereignty is challenged by the persistent Hukbalahap insurgency, which continues to destabilize much of Luzon, demanding significant military resources and diverting attention from national development. The widespread devastation from World War II still mars our landscapes, and the urgent task of reconstruction looms large.\n\nOur immediate challenges are multifaceted. First and foremost, we must decisively address the Huk rebellion, restoring law and order to the affected regions and ensuring the safety of our citizens. Simultaneously, we face the monumental task of economic recovery and development, requiring prudent fiscal management, attracting investment, and rebuilding critical infrastructure. Systemic corruption, a lingering issue from previous administrations, undermines public trust and hinders progress, demanding immediate and resolute action. Furthermore, critical social issues such as poverty and the urgent need for land reform continue to fuel discontent and must be addressed to foster genuine national unity and long-term stability."
+    },
+    "Philippines-2000": {
+        "population": 76500000,
+        "gdp": 79.6,
+        "military_strength": 200.0,
+        "political_stability": 35.0,
+        "briefing": "Good morning, Mr. President. Our nation stands at a precarious crossroads. Geopolitically, we maintain strong ties with the United States and our ASEAN neighbors, but our primary focus remains internal. The ongoing insurgency in Mindanao, spearheaded by groups like the Abu Sayyaf and MILF, continues to drain resources and destabilize the southern regions, while the New People's Army persists in various rural areas. Economically, we face challenges of poverty and unemployment, with an urgent need for sustainable growth and foreign investment. The immediate and most pressing challenge, however, is the severe political crisis engulfing your administration, driven by allegations of corruption and 'Juetengate' revelations, which have sparked widespread discontent and calls for your impeachment, threatening to paralyze the government.\n\nInternally, our political stability is severely compromised. Public trust in institutions is eroding rapidly amidst the corruption scandal, leading to growing social unrest and the potential for large-scale protests, reminiscent of past 'People Power' movements. Governance is becoming increasingly difficult as attention is diverted to the political turmoil. Our military and police forces are stretched thin, simultaneously combating insurgencies and maintaining order in an increasingly polarized society. Restoring stability, addressing the roots of corruption, fostering genuine economic opportunity for all Filipinos, and pursuing lasting peace in Mindanao are paramount to prevent further fragmentation and guide the Philippines towards a more prosperous future."
+    },
+    "Philippines -2000": {
+        "population": 76400000,
+        "gdp": 79.6,
+        "military_strength": 280.0,
+        "political_stability": 50.0,
+        "briefing": "Good morning, Mr. President. We convene at a critical juncture for our nation. The impeachment trial against your administration continues to dominate headlines and public discourse, creating a climate of significant political uncertainty. This ongoing scrutiny has intensified public protests and polarization, placing immense pressure on our democratic institutions and raising questions about governmental stability. Maintaining domestic order and rebuilding public trust must be our paramount concerns as we navigate this delicate period.\n\nEconomically, the country is still grappling with the lingering effects of the 1997 Asian Financial Crisis, resulting in moderate growth and persistent unemployment challenges. Foreign direct investment remains cautious amidst the political turbulence, hindering our full economic recovery. Furthermore, the security situation, particularly in Mindanao, demands immediate attention. The Abu Sayyaf Group's recent high-profile kidnappings of foreign tourists and locals have not only garnered international condemnation but also underscore the persistent threat posed by various insurgent groups, requiring a robust and decisive response from our armed forces.",
+        "world_gdp": {
+            "United States": 10252.0,
+            "Japan": 4892.0,
+            "Germany": 1948.0,
+            "United Kingdom": 1708.0,
+            "France": 1362.0,
+            "China": 1211.0,
+            "Italy": 1148.0,
+            "Canada": 737.0,
+            "Spain": 612.0,
+            "India": 474.0
+        },
+        "world_military": {
+            "United States": 980.0,
+            "Russia": 850.0,
+            "China": 700.0,
+            "United Kingdom": 600.0,
+            "France": 580.0,
+            "Germany": 520.0,
+            "India": 480.0,
+            "Japan": 450.0,
+            "South Korea": 420.0,
+            "Israel": 400.0
+        }
+    }
+}
