@@ -1,10 +1,19 @@
-# core/ai_handler.py
 import json
 import time
-import re
 import os
-from google import genai
 from dotenv import load_dotenv
+from google import genai        # The new SDK
+from google.genai import types  # For safety and config types
+
+# 1. Define the custom safety thresholds
+# Define the custom safety thresholds using the new SDK types
+safety_settings = [
+    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
+    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
+    types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+    # Keep NSFW content blocked for professional integrity
+    types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_ONLY_HIGH"),
+]
 
 class AIHandler:
     def __init__(self):
@@ -58,7 +67,8 @@ class AIHandler:
         try:
             response = self.client.models.generate_content(
                 model='gemini-2.5-flash',
-                contents=system_prompt
+                contents=system_prompt,
+                config=types.GenerateContentConfig(safety_settings=safety_settings) # Add this!
             )
             
             # Clean up potential markdown formatting
@@ -147,7 +157,8 @@ class AIHandler:
             try:
                 response = self.client.models.generate_content(
                     model='gemini-2.5-flash',
-                    contents=system_prompt
+                    contents=system_prompt,
+                    config=types.GenerateContentConfig(safety_settings=safety_settings) # Add this!
                 )
                 
                 # Safety Filter Check
