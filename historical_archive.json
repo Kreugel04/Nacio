@@ -64,5 +64,36 @@
             "South Korea": 420.0,
             "Israel": 400.0
         }
+    },
+    "Philippines-1955": {
+        "population": 22600000,
+        "gdp": 1.9,
+        "military_strength": 85.0,
+        "political_stability": 60.0,
+        "briefing": "Esteemed Cabinet Members, we gather at a crucial juncture for our young republic. Our immediate focus must be on solidifying internal security and accelerating post-war reconstruction. The Hukbalahap rebellion, though waning under President Magsaysay's leadership, still poses a significant threat to peace and stability in rural areas. We must continue our combined military and socio-economic approach, including land reform and rural development, to address the root causes of unrest. Furthermore, the scars of World War II are still visible across our nation, demanding urgent attention to infrastructure, housing, and social services to rebuild and uplift our communities.\n\nEconomically, we face the dual challenge of transitioning from an agrarian society towards industrialization while managing our trade relations. Our dependence on the United States remains substantial, and we must strategically diversify our economic partnerships and foster local industries to achieve true economic sovereignty. Attracting foreign investment, improving agricultural productivity, and ensuring stable commodity prices will be paramount. On the international stage, we navigate the complex currents of the Cold War, striving to protect our national interests and secure our place as a respected, independent nation in Southeast Asia.",
+        "world_gdp": {
+            "United States": 439.0,
+            "Soviet Union": 130.0,
+            "United Kingdom": 68.0,
+            "West Germany": 42.0,
+            "France": 41.0,
+            "Canada": 29.0,
+            "Japan": 27.0,
+            "China (PRC)": 22.0,
+            "India": 21.0,
+            "Italy": 19.0
+        },
+        "world_military": {
+            "United States": 950.0,
+            "Soviet Union": 900.0,
+            "United Kingdom": 450.0,
+            "France": 380.0,
+            "China (PRC)": 300.0,
+            "West Germany": 250.0,
+            "India": 200.0,
+            "Canada": 150.0,
+            "Japan": 100.0,
+            "Australia": 90.0
+        }
     }
 }
