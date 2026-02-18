@@ -63,6 +63,7 @@ class AIHandler:
         
         Respond ONLY in valid JSON format using this exact schema:
         {{
+            "flag_emoji": "[Provide the modern emoji flag for this country. If it is an ancient or fictional nation with no emoji, use 🏳️]",
             "population": [integer],
             "gdp": [float, in billions USD],
             "military_strength": [float, 0-1000 scale],

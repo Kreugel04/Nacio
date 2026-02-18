@@ -1,99 +1,98 @@
 {
     "United States-1980": {
-        "population": 226000000,
-        "gdp": 2859.0,
+        "flag_emoji": "\ud83c\uddfa\ud83c\uddf8",
+        "population": 226500000,
+        "gdp": 2789.0,
         "military_strength": 960.0,
-        "political_stability": 85.0,
-        "briefing": "The United States stands as the world's premier economic power, but faces rising inflation and a tense Cold War standoff with the Soviet Union."
+        "political_stability": 70.0,
+        "briefing": "Good morning, Mr. President. Our nation faces a confluence of pressing challenges both domestically and abroad. Economically, we are grappling with severe stagflation, characterized by high unemployment, persistent inflation nearing double digits, and soaring interest rates that are stifling investment and consumer spending. The ongoing energy crisis continues to impact our industries and households, exacerbating economic anxieties. Furthermore, the protracted Iran Hostage Crisis remains a significant diplomatic and humanitarian concern, demanding a swift and honorable resolution that restores American prestige on the global stage.\n\nInternationally, the Soviet invasion of Afghanistan has heightened Cold War tensions, requiring a firm and strategic response to contain Soviet expansionism and reassure our allies. Domestically, there is a growing sense of public frustration over economic woes and our perceived diminished influence abroad. As we approach an election year, maintaining national unity and confidence will be paramount while simultaneously addressing the fundamental economic structural issues and securing the release of our citizens held in Tehran.",
+        "world_gdp": {
+            "Soviet Union": 1500.0,
+            "Japan": 1065.0,
+            "West Germany": 839.0,
+            "France": 686.0,
+            "United Kingdom": 539.0,
+            "Italy": 423.0,
+            "China": 300.0,
+            "Canada": 282.0,
+            "Brazil": 240.0,
+            "Spain": 220.0
+        },
+        "world_military": {
+            "Soviet Union": 970.0,
+            "China": 480.0,
+            "West Germany": 400.0,
+            "France": 380.0,
+            "United Kingdom": 360.0,
+            "India": 250.0,
+            "Israel": 230.0,
+            "North Korea": 210.0,
+            "Egypt": 200.0,
+            "Turkey": 190.0
+        }
     },
     "Japan-1980": {
-        "population": 116000000,
-        "gdp": 1150.0,
-        "military_strength": 530.0,
-        "political_stability": 90.0,
-        "briefing": "Japan is experiencing an unprecedented 'Economic Miracle,' rapidly becoming a global leader in technology and automotive manufacturing."
-    },
-    "Germany-1920": {
-        "population": 60000000,
-        "gdp": 18.5,
-        "military_strength": 120.0,
-        "political_stability": 25.0,
-        "briefing": "Herr Kanzler, you inherit a nation in profound crisis. The ink on the Treaty of Versailles is barely dry, yet its oppressive clauses already suffocate us: staggering reparations payments, the loss of vital industrial and agricultural territories, and the emasculation of our once-proud military. France, in particular, remains unyielding in its demands, exacerbating our economic woes and fueling a pervasive sense of national humiliation. We stand isolated on the international stage, our borders vulnerable and our voice diminished, while the Allied occupation of the Rhineland serves as a constant reminder of our defeat.\n\nDomestically, the situation is equally perilous. The nascent Weimar Republic struggles for legitimacy, having narrowly survived the recent Kapp Putsch in March, a stark warning of the powerful right-wing elements yearning for a return to authoritarianism. Communist agitation from the left also threatens to plunge our cities into chaos, as economic hardship \u2013 rampant unemployment, a rapidly devaluing currency, and shortages of basic necessities \u2013 breeds widespread discontent. Your immediate challenge is to steer a fractured Germany between the Scylla of foreign demands and the Charybdis of internal revolution, all while attempting to rebuild a shattered economy and restore a semblance of national pride."
-    },
-    "Philippines -1950": {
-        "population": 20000000,
-        "gdp": 2.0,
-        "military_strength": 150.0,
-        "political_stability": 45.0,
-        "briefing": "Good morning, Mr. President. The newly independent Republic of the Philippines stands at a pivotal juncture in 1950. Globally, the shadows of the Cold War lengthen, with the recent communist victory in China and the outbreak of war in Korea underscoring the ideological struggle shaping Asia. Our young nation maintains strong strategic and economic ties with the United States, a critical alliance for our security and recovery. However, internally, our sovereignty is challenged by the persistent Hukbalahap insurgency, which continues to destabilize much of Luzon, demanding significant military resources and diverting attention from national development. The widespread devastation from World War II still mars our landscapes, and the urgent task of reconstruction looms large.\n\nOur immediate challenges are multifaceted. First and foremost, we must decisively address the Huk rebellion, restoring law and order to the affected regions and ensuring the safety of our citizens. Simultaneously, we face the monumental task of economic recovery and development, requiring prudent fiscal management, attracting investment, and rebuilding critical infrastructure. Systemic corruption, a lingering issue from previous administrations, undermines public trust and hinders progress, demanding immediate and resolute action. Furthermore, critical social issues such as poverty and the urgent need for land reform continue to fuel discontent and must be addressed to foster genuine national unity and long-term stability."
-    },
-    "Philippines-2000": {
-        "population": 76500000,
-        "gdp": 79.6,
-        "military_strength": 200.0,
-        "political_stability": 35.0,
-        "briefing": "Good morning, Mr. President. Our nation stands at a precarious crossroads. Geopolitically, we maintain strong ties with the United States and our ASEAN neighbors, but our primary focus remains internal. The ongoing insurgency in Mindanao, spearheaded by groups like the Abu Sayyaf and MILF, continues to drain resources and destabilize the southern regions, while the New People's Army persists in various rural areas. Economically, we face challenges of poverty and unemployment, with an urgent need for sustainable growth and foreign investment. The immediate and most pressing challenge, however, is the severe political crisis engulfing your administration, driven by allegations of corruption and 'Juetengate' revelations, which have sparked widespread discontent and calls for your impeachment, threatening to paralyze the government.\n\nInternally, our political stability is severely compromised. Public trust in institutions is eroding rapidly amidst the corruption scandal, leading to growing social unrest and the potential for large-scale protests, reminiscent of past 'People Power' movements. Governance is becoming increasingly difficult as attention is diverted to the political turmoil. Our military and police forces are stretched thin, simultaneously combating insurgencies and maintaining order in an increasingly polarized society. Restoring stability, addressing the roots of corruption, fostering genuine economic opportunity for all Filipinos, and pursuing lasting peace in Mindanao are paramount to prevent further fragmentation and guide the Philippines towards a more prosperous future."
-    },
-    "Philippines -2000": {
-        "population": 76400000,
-        "gdp": 79.6,
-        "military_strength": 280.0,
-        "political_stability": 50.0,
-        "briefing": "Good morning, Mr. President. We convene at a critical juncture for our nation. The impeachment trial against your administration continues to dominate headlines and public discourse, creating a climate of significant political uncertainty. This ongoing scrutiny has intensified public protests and polarization, placing immense pressure on our democratic institutions and raising questions about governmental stability. Maintaining domestic order and rebuilding public trust must be our paramount concerns as we navigate this delicate period.\n\nEconomically, the country is still grappling with the lingering effects of the 1997 Asian Financial Crisis, resulting in moderate growth and persistent unemployment challenges. Foreign direct investment remains cautious amidst the political turbulence, hindering our full economic recovery. Furthermore, the security situation, particularly in Mindanao, demands immediate attention. The Abu Sayyaf Group's recent high-profile kidnappings of foreign tourists and locals have not only garnered international condemnation but also underscore the persistent threat posed by various insurgent groups, requiring a robust and decisive response from our armed forces.",
+        "flag_emoji": "\ud83c\uddef\ud83c\uddf5",
+        "population": 116800000,
+        "gdp": 1060.0,
+        "military_strength": 450.0,
+        "political_stability": 92.0,
+        "briefing": "Economic prosperity is undeniable, yet our resource dependency remains a critical vulnerability, particularly in the wake of the recent global energy shocks. While our technological prowess and export-driven industries continue to expand, we must navigate increasing trade friction with Western partners, especially the United States and European nations, who view our surging competitiveness with growing concern. Maintaining this delicate balance between growth and global economic harmony will be paramount for sustained national success.\n\nGeopolitically, the Cold War casts a long shadow over East Asia. The Soviet Union's significant military presence in the Far East, combined with an unpredictable North Korea and a modernizing China, presents a complex security landscape. Our alliance with the United States is the cornerstone of our defense, but we must continually assess our own self-defense capabilities within the confines of our pacifist constitution. Strengthening regional stability through diplomatic initiatives, while carefully managing our relationship with our primary protector, will require astute statecraft.",
         "world_gdp": {
-            "United States": 10252.0,
-            "Japan": 4892.0,
-            "Germany": 1948.0,
-            "United Kingdom": 1708.0,
-            "France": 1362.0,
-            "China": 1211.0,
-            "Italy": 1148.0,
-            "Canada": 737.0,
-            "Spain": 612.0,
-            "India": 474.0
+            "United States": 2790.0,
+            "Soviet Union": 1140.0,
+            "West Germany": 820.0,
+            "France": 680.0,
+            "United Kingdom": 530.0,
+            "Italy": 440.0,
+            "China": 300.0,
+            "Canada": 300.0,
+            "Brazil": 230.0,
+            "Spain": 220.0
+        },
+        "world_military": {
+            "United States": 1000.0,
+            "Soviet Union": 950.0,
+            "China": 680.0,
+            "United Kingdom": 520.0,
+            "France": 510.0,
+            "West Germany": 490.0,
+            "India": 420.0,
+            "Israel": 410.0,
+            "Egypt": 390.0,
+            "North Korea": 370.0
+        }
+    },
+    "Philippines-1990": {
+        "flag_emoji": "\ud83c\uddf5\ud83c\udded",
+        "population": 62600000,
+        "gdp": 47.7,
+        "military_strength": 180.0,
+        "political_stability": 45.0,
+        "briefing": "Esteemed Cabinet members, we face a complex tapestry of immediate challenges. On the political and security front, the persistent threat of internal conflict remains paramount. The communist insurgency by the New People's Army continues to destabilize rural areas, while separatist movements in Mindanao demand our careful attention. Furthermore, the specter of past coup attempts against the nascent democratic government highlights the fragility of our political institutions and the urgent need to consolidate civilian control over the military. Building national unity and trust in governance is crucial to ensuring long-term stability and deterring any future challenges to our democratic mandate.\n\nEconomically, the nation grapples with significant hurdles. High levels of foreign debt, widespread poverty, and underemployment continue to burden our populace. Critical infrastructure, particularly in transportation and energy, requires substantial investment to unlock our full economic potential. We must also contend with our inherent vulnerability to natural disasters, which frequently disrupt livelihoods and development efforts. Our immediate focus must be on implementing reforms to attract foreign investment, stimulate job creation, alleviate poverty, and build resilience against external shocks, while ensuring equitable distribution of growth benefits across all regions.",
+        "world_gdp": {
+            "United States": 5979.6,
+            "Japan": 3132.8,
+            "West Germany": 1777.6,
+            "France": 1229.0,
+            "United Kingdom": 1084.1,
+            "Italy": 1018.6,
+            "Canada": 579.5,
+            "Spain": 508.8,
+            "Soviet Union": 513.0,
+            "China": 398.0
         },
         "world_military": {
             "United States": 980.0,
-            "Russia": 850.0,
-            "China": 700.0,
-            "United Kingdom": 600.0,
-            "France": 580.0,
-            "Germany": 520.0,
+            "Soviet Union": 950.0,
+            "United Kingdom": 720.0,
+            "France": 700.0,
+            "China": 650.0,
+            "West Germany": 600.0,
             "India": 480.0,
             "Japan": 450.0,
-            "South Korea": 420.0,
-            "Israel": 400.0
-        }
-    },
-    "Philippines-1955": {
-        "population": 22600000,
-        "gdp": 1.9,
-        "military_strength": 85.0,
-        "political_stability": 60.0,
-        "briefing": "Esteemed Cabinet Members, we gather at a crucial juncture for our young republic. Our immediate focus must be on solidifying internal security and accelerating post-war reconstruction. The Hukbalahap rebellion, though waning under President Magsaysay's leadership, still poses a significant threat to peace and stability in rural areas. We must continue our combined military and socio-economic approach, including land reform and rural development, to address the root causes of unrest. Furthermore, the scars of World War II are still visible across our nation, demanding urgent attention to infrastructure, housing, and social services to rebuild and uplift our communities.\n\nEconomically, we face the dual challenge of transitioning from an agrarian society towards industrialization while managing our trade relations. Our dependence on the United States remains substantial, and we must strategically diversify our economic partnerships and foster local industries to achieve true economic sovereignty. Attracting foreign investment, improving agricultural productivity, and ensuring stable commodity prices will be paramount. On the international stage, we navigate the complex currents of the Cold War, striving to protect our national interests and secure our place as a respected, independent nation in Southeast Asia.",
-        "world_gdp": {
-            "United States": 439.0,
-            "Soviet Union": 130.0,
-            "United Kingdom": 68.0,
-            "West Germany": 42.0,
-            "France": 41.0,
-            "Canada": 29.0,
-            "Japan": 27.0,
-            "China (PRC)": 22.0,
-            "India": 21.0,
-            "Italy": 19.0
-        },
-        "world_military": {
-            "United States": 950.0,
-            "Soviet Union": 900.0,
-            "United Kingdom": 450.0,
-            "France": 380.0,
-            "China (PRC)": 300.0,
-            "West Germany": 250.0,
-            "India": 200.0,
-            "Canada": 150.0,
-            "Japan": 100.0,
-            "Australia": 90.0
+            "Israel": 420.0,
+            "Italy": 380.0
         }
     }
 }

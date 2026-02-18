@@ -1,11 +1,17 @@
 # models/nation.py
 
 class Nation:
-    def __init__(self, name: str, year: int, population: int, gdp: float, military_strength: float, political_stability: float, briefing: str = "", save_name: str = "default", treasury: float = None, world_gdp: dict = None, world_military: dict = None, stat_history: list = None):
+    def __init__(self, name: str, year: int, population: int, gdp: float, military_strength: float, political_stability: float, briefing: str = "", save_name: str = "default", treasury: float = None, world_gdp: dict = None, world_military: dict = None, stat_history: list = None, flag_emoji: str = "🏳️"):
         self.name = name
         self.save_name = save_name
         self.starting_year = year 
         self.briefing_text = briefing
+        
+        # --- THE NEW EMOJI ATTRIBUTE ---
+        self.flag_emoji = flag_emoji
+            
+        self.population = population
+        # ... (keep the rest of your init variables exactly the same)
         
         self.population = population
         self.public_approval = 50.0  
@@ -48,6 +54,7 @@ class Nation:
             "save_name": self.save_name, # Added this
             "starting_year": self.starting_year,
             "briefing_text": self.briefing_text,
+            "flag_emoji": self.flag_emoji,
             "population": self.population,
             "public_approval": self.public_approval,
             "gdp": self.gdp,
@@ -70,6 +77,7 @@ class Nation:
             name=data["name"],
             save_name=data.get("save_name", "default"), # Retrieve the save name
             year=data.get("starting_year", 1),
+            flag_emoji=data.get("flag_emoji", "🏳️"),
             population=data["population"],
             gdp=data["gdp"],
             treasury=data.get("treasury", data["gdp"] * 0.20), # Add this!

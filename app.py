@@ -83,6 +83,19 @@ with st.sidebar:
     st.title("🏛️ Cabinet Office")
     if st.session_state.nation:
         n = st.session_state.nation
+        
+        # Failsafe: if loading an older save file before we added emojis, use the white flag
+        hex_code = "-".join(f"{ord(c):x}" for c in n.flag_emoji)
+        
+        # Pull the exact image from the open-source Twemoji CDN
+        twemoji_url = f"https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/{hex_code}.png"
+        
+        # Render it as a crisp image! 'drop-shadow' applies shadow to the flag's exact shape
+        st.markdown(f"""
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="{twemoji_url}" style="height: 7rem; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4));" alt="{n.flag_emoji}">
+            </div>
+        """, unsafe_allow_html=True)
         st.metric("Nation", n.name)
         st.metric("Year", st.session_state.turn)
         st.divider()
@@ -182,9 +195,12 @@ if st.session_state.nation is None:
     
     if st.button("Initialize Simulation"):
         data = st.session_state.ai.generate_starting_nation(country_input, year_input)
-        if data:
+        
+        # --- THE FIX: Ensure 'data' is a dictionary, not an error string! ---
+        if isinstance(data, dict):
             st.session_state.nation = Nation(
                 name=country_input, year=year_input, 
+                flag_emoji=data.get('flag_emoji', '🏳️'), 
                 population=data['population'], gdp=data['gdp'],
                 military_strength=data['military_strength'], 
                 political_stability=data['political_stability'],
@@ -197,6 +213,12 @@ if st.session_state.nation is None:
             st.session_state.nation.record_stats(st.session_state.turn)
             st.session_state.messages = [{"role": "assistant", "content": f"**INITIAL CABINET REPORT:**\n\n{data['briefing']}"}]
             st.rerun()
+            
+        elif isinstance(data, str):
+            # If the AI returns an Uplink Error string, show it safely on the UI!
+            st.error(f"📡 **COMMUNICATIONS FAILURE:** {data}")
+        else:
+            st.error("📡 **COMMUNICATIONS FAILURE:** The AI failed to generate a valid nation state.")
 
 # 2. MAIN INTERFACE TABS
 else:
