@@ -27,6 +27,47 @@ def save_game(nation, turn):
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Nacio: A Global Symphony", layout="wide")
 
+# --- CUSTOM CSS FOR STICKY HEADER ---
+st.markdown("""
+    <style>
+        /* 1. Remove all hidden overflows from Streamlit's entire nested layout tree */
+        .main .block-container,
+        div[data-testid="stVerticalBlock"],
+        div[data-testid="stVerticalBlockBorderWrapper"],
+        div[data-testid="stElementContainer"],
+        div[data-testid="stTabs"],
+        div[data-baseweb="tabs"] { 
+            overflow: visible !important;
+            clip-path: none !important;
+        }
+
+        /* 2. Pin the MAIN Title (The '.main' addition ignores the sidebar!) */
+        .main div[data-testid="stElementContainer"]:has(h1) {
+            position: sticky !important;
+            top: 2.875rem !important; 
+            z-index: 1000 !important;
+            background-color: #0E1117 !important;
+            padding-bottom: 0.5rem !important;
+        }
+        
+        /* 3. Pin the Tab Menu */
+        .main div[role="tablist"] {
+            position: sticky !important;
+            top: 7.2rem !important; 
+            z-index: 999 !important;
+            background-color: #0E1117 !important;
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* 4. Ensure Chat Input stays above scrolling text */
+        div[data-testid="stChatInput"] {
+            z-index: 1001 !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- INITIALIZE SESSION STATE ---
 if 'nation' not in st.session_state:
     st.session_state.nation = None
@@ -69,9 +110,9 @@ with st.sidebar:
         sorted_mil = sorted(live_military_rankings.items(), key=lambda x: x[1], reverse=True)
         
         # Create tabs so the sidebar isn't too long
-        tab1, tab2 = st.tabs(["💰 Top Economies", "⚔️ Top Militaries"])
+        rank_tab1, rank_tab2 = st.tabs(["💰 Top Economies", "⚔️ Top Militaries"])
         
-        with tab1:
+        with rank_tab1:
             # Format as a clean dataframe
             df_gdp = pd.DataFrame(sorted_gdp, columns=["Nation", "GDP ($B)"])
             df_gdp.index = df_gdp.index + 1 # Start rank at 1 instead of 0
@@ -82,7 +123,7 @@ with st.sidebar:
             
             st.dataframe(df_gdp.style.apply(highlight_player, axis=1), use_container_width=True)
             
-        with tab2:
+        with rank_tab2:
             df_mil = pd.DataFrame(sorted_mil, columns=["Nation", "Power Score"])
             df_mil.index = df_mil.index + 1
             st.dataframe(df_mil.style.apply(highlight_player, axis=1), use_container_width=True)
@@ -92,10 +133,9 @@ with st.sidebar:
         st.subheader("Data Archives")
         
         # 1. Quick Save (Current Game)
-        if st.session_state.nation:
-            if st.button("💾 Quick Save Current"):
-                save_game(st.session_state.nation, st.session_state.turn)
-                st.success("Progress archived.")
+        if st.button("💾 Quick Save Current"):
+            save_game(st.session_state.nation, st.session_state.turn)
+            st.success("Progress archived.")
 
         # 2. Archive Manager (Load & Delete)
         with st.expander("📂 Manage Saved Timelines", expanded=True):
@@ -123,7 +163,6 @@ with st.sidebar:
                                 st.rerun()
                                 
                         with col3:
-                            # The missing Delete Button!
                             if st.button("🗑️", key=f"del_{file}", help="Delete this timeline"):
                                 os.remove(f"saves/{file}")
                                 st.toast(f"Deleted {file}")
@@ -159,11 +198,10 @@ if st.session_state.nation is None:
             st.session_state.messages = [{"role": "assistant", "content": f"**INITIAL CABINET REPORT:**\n\n{data['briefing']}"}]
             st.rerun()
 
-# 2. THE CHAT INTERFACE (The LLM Feel)
 # 2. MAIN INTERFACE TABS
 else:
-    # Split the main screen into two distinct views
-    tab1, tab2 = st.tabs(["💬 Command Center", "📊 National Analytics"])
+    # Split the main screen into THREE distinct views
+    tab1, tab2, tab3 = st.tabs(["💬 Command Center", "📊 National Analytics", "🌍 Foreign Affairs"])
 
     # --- TAB 1: THE AI CHAT ---
     with tab1:
@@ -171,6 +209,20 @@ else:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
+        # END TURN BUTTON - Safely inside Tab 1!
+        if st.button("🔔 End Turn"):
+            event = trigger_historical_event(st.session_state.nation, st.session_state.turn, st.session_state.ai)
+            if event:
+                st.session_state.messages.append({"role": "assistant", "content": f"### GLOBAL EVENT: {st.session_state.turn}\n{event}"})
+            
+            st.session_state.turn += 1
+            st.session_state.nation.process_turn()
+            
+            # Record the new stats at the end of the year!
+            st.session_state.nation.record_stats(st.session_state.turn)
+            st.rerun()
+
+    # CHAT INPUT - Safely OUTSIDE the tabs!
         if prompt := st.chat_input("What is your next directive?"):
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
@@ -185,20 +237,7 @@ else:
                     st.session_state.messages.append({"role": "assistant", "content": response})
             st.rerun()
 
-        if st.button("🔔 End Turn"):
-            event = trigger_historical_event(st.session_state.nation, st.session_state.turn, st.session_state.ai)
-            if event:
-                 st.session_state.messages.append({"role": "assistant", "content": f"### GLOBAL EVENT: {st.session_state.turn}\n{event}"})
-            
-            st.session_state.turn += 1
-            st.session_state.nation.process_turn()
-            
-            # Record the new stats at the end of the year!
-            st.session_state.nation.record_stats(st.session_state.turn)
-            st.rerun()
-
     # --- TAB 2: DATA VISUALIZATION ---
-    
     with tab2:
         st.subheader(f"Historical Trajectory of {st.session_state.nation.name}")
         
@@ -221,3 +260,74 @@ else:
             st.line_chart(df[["Population"]], color="#FF4B4B")
         else:
             st.info("Pass your first turn to begin tracking national analytics.")
+    
+    # --- TAB 3: FOREIGN AFFAIRS & INTELLIGENCE ---
+    with tab3:
+        st.subheader("Global Operations Dashboard")
+        st.markdown("Initiate direct diplomatic channels or launch classified covert operations.")
+        
+        # 1. Target Selection (Pulls dynamically from the generated world data!)
+        available_targets = list(st.session_state.nation.world_gdp.keys())
+        if not available_targets:
+            available_targets = ["United States", "China", "Russia", "European Union"] # Fallback
+            
+        target_nation = st.selectbox("Select Target Nation:", available_targets)
+        
+        # 2. Action Type Selection
+        action_type = st.radio("Select Operation Type:", ["🤝 Diplomatic Negotiation", "🕵️ Covert Espionage"], horizontal=True)
+        st.divider()
+        
+        # --- COVERT ESPIONAGE UI ---
+        if action_type == "🕵️ Covert Espionage":
+            st.markdown(f"**Target:** {target_nation}")
+            op_details = st.text_area("Operation Directives (e.g., Sabotage infrastructure, steal military blueprints):")
+            
+            if st.button("Execute Operation Blacklight", type="primary"):
+                if op_details:
+                    with st.spinner(f"Transmitting orders to field operatives in {target_nation}..."):
+                        report = st.session_state.ai.run_espionage(st.session_state.nation, target_nation, op_details, st.session_state.turn)
+                        
+                        # Display the result in the tab
+                        st.error(f"### TOP SECRET: INTELLIGENCE BRIEFING\n{report}")
+                        
+                        # Log it into the main chat timeline so the player has a record of it
+                        log_msg = f"### 🕵️ OPERATION REPORT: {target_nation}\n{report}"
+                        st.session_state.messages.append({"role": "assistant", "content": log_msg})
+                        st.session_state.nation.add_event(st.session_state.turn, f"[CLASSIFIED] Op against {target_nation}: {op_details}")
+                else:
+                    st.warning("Please provide operation directives before executing.")
+
+        # --- DIPLOMATIC NEGOTIATION UI ---
+        elif action_type == "🤝 Diplomatic Negotiation":
+            st.markdown(f"**Direct Secure Channel:** {target_nation}")
+            
+            # Use Streamlit session state to remember the ongoing conversation
+            if 'diplomacy_chat' not in st.session_state:
+                st.session_state.diplomacy_chat = []
+                
+            diplomatic_message = st.text_area(f"Message to the {target_nation} Delegate:")
+            
+            if st.button("Send Diplomatic Cable"):
+                if diplomatic_message:
+                    with st.spinner(f"Awaiting response from {target_nation}..."):
+                        # Get AI response using the new method we just added
+                        delegate_response = st.session_state.ai.negotiate(
+                            st.session_state.nation.name, 
+                            target_nation, 
+                            diplomatic_message, 
+                            st.session_state.diplomacy_chat
+                        )
+                        
+                        # Save to our local temporary history
+                        st.session_state.diplomacy_chat.append(("Supreme Leader", diplomatic_message))
+                        st.session_state.diplomacy_chat.append((f"{target_nation} Delegate", delegate_response))
+                        
+                        # Show the response on screen
+                        st.success(f"**{target_nation} Delegate:**\n\n{delegate_response}")
+                        
+                        # Log the exchange in the main Command Center chat
+                        st.session_state.messages.append({"role": "user", "content": f"**[Diplomatic Cable to {target_nation}]:** {diplomatic_message}"})
+                        st.session_state.messages.append({"role": "assistant", "content": f"**[{target_nation} Delegate]:** {delegate_response}"})
+                        st.session_state.nation.add_event(st.session_state.turn, f"Diplomatic exchange with {target_nation}.")
+                else:
+                    st.warning("Cannot send an empty cable.")

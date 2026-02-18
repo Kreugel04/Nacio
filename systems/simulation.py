@@ -86,3 +86,5 @@ def resolve_internal_stability(nation):
     nation.political_stability = max(0.0, min(100.0, nation.political_stability))
     
     return events_triggered
+
+# Add to the bottom of systems/simulation.py

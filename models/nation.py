@@ -108,30 +108,30 @@ class Nation:
 
     def process_turn(self):
         from systems.simulation import simulate_population, simulate_economy, resolve_internal_stability
-        print("\nSimulating internal events and faction actions...")
+        
         turn_events = resolve_internal_stability(self)
         pop_growth = simulate_population(self)
         gdp_growth, ggr = simulate_economy(self)
 
-        # --- NEW: Collect Annual Taxes (e.g., 15% of GDP) ---
         tax_revenue = self.gdp * 0.15
         self.treasury += tax_revenue
 
-        # Background simulation for the rest of the world
         import random
         for country in self.world_gdp:
-            self.world_gdp[country] *= random.uniform(1.01, 1.04) # 1% to 4% global GDP growth
+            self.world_gdp[country] *= random.uniform(1.01, 1.04) 
         for country in self.world_military:
-            self.world_military[country] *= random.uniform(0.98, 1.02) # Military power fluctuates
+            self.world_military[country] *= random.uniform(0.98, 1.02) 
         
-        print("\n=== End of Year Report ===")
+        # --- RETURN THE REPORT INSTEAD OF PRINTING ---
+        report = "### 📊 Annual End of Year Report\n"
         if turn_events:
-            print("Notable Events:")
+            report += "**Notable Events:**\n"
             for event in turn_events:
-                print(f" * {event}")
-        print("-" * 26)
-        print(f"Population Change: +{pop_growth:,} citizens")
-        print(f"Economic Growth Rate: {ggr * 100:.2f}%")
-        print(f"Total GDP Change: ${gdp_growth:,.2f}B")
-        print(f"Tax Revenue Collected: +${tax_revenue:,.2f}B")
-        print("==========================\n")
+                report += f"- {event}\n"
+        
+        report += f"\n* **Population Change:** +{pop_growth:,} citizens\n"
+        report += f"* **Economic Growth Rate:** {ggr * 100:.2f}%\n"
+        report += f"* **Total GDP Change:** ${gdp_growth:,.2f}B\n"
+        report += f"* **Tax Revenue Collected:** +${tax_revenue:,.2f}B\n"
+        
+        return report

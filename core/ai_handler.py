@@ -4,15 +4,14 @@ import time
 import os
 import re
 from dotenv import load_dotenv
-from google import genai        # The new SDK
-from google.genai import types  # For safety and config types
+from google import genai
+from google.genai import types
 
-# 1. Define custom safety thresholds using the new SDK types
+# Define custom safety thresholds 
 safety_settings = [
     types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
     types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
     types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-    # Keep NSFW content blocked for professional integrity
     types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_ONLY_HIGH"),
 ]
 
@@ -21,27 +20,19 @@ class AIHandler:
         """Initializes the AI connection using the API key from the .env file."""
         load_dotenv()
         api_key = os.getenv("GEMINI_API_KEY")
-        
         if not api_key:
             raise ValueError("API Key not found! Please check your .env file.")
-            
         self.client = genai.Client(api_key=api_key)
     
     def generate_starting_nation(self, country_name, year):
         """Asks the AI for stats, with key normalization and world rank failovers."""
         archive_path = "historical_archive.json"
-        
-        # --- NORMALIZATION ---
-        # Strip spaces to ensure "Philippines -1950" matches "Philippines-1950"
         clean_name = country_name.strip()
         lookup_key = f"{clean_name}-{year}"
 
-        # 1. Check the local archive first
         if os.path.exists(archive_path):
             with open(archive_path, "r") as f:
                 archive = json.load(f)
-                
-                # Fuzzy Search: Check for exact match OR space-stripped match
                 found_key = None
                 if lookup_key in archive:
                     found_key = lookup_key
@@ -54,17 +45,12 @@ class AIHandler:
                 if found_key:
                     print(f"[SYSTEM LOG]: Match found! Loading {found_key}...")
                     data = archive[found_key]
-                    
-                    # --- DATA INTEGRITY FAILOVER ---
-                    # Ensure older archive entries (missing world data) don't crash the UI
                     if "world_gdp" not in data:
                         data["world_gdp"] = {"United States": 10000.0, "China": 1000.0, "Japan": 5000.0}
                     if "world_military" not in data:
                         data["world_military"] = {"United States": 950.0, "Russia": 800.0, "China": 700.0}
-                    
                     return data
 
-        # 2. If not in archive, proceed to AI Generation
         print(f"[SYSTEM LOG]: {lookup_key} not in archives. Requesting AI generation...")
         
         system_prompt = f"""
@@ -87,7 +73,6 @@ class AIHandler:
         }}
         """
         
-        # --- MODEL FAILOVER LOOP ---
         for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
             try:
                 print(f"[SYSTEM LOG]: Attempting generation with {model_name}...")
@@ -97,15 +82,11 @@ class AIHandler:
                     config=types.GenerateContentConfig(safety_settings=safety_settings)
                 )
                 
-                # --- ROBUST JSON EXTRACTION ---
                 match = re.search(r'(\{.*\})', response.text, re.DOTALL)
                 if match:
                     data = json.loads(match.group(1))
-                    
-                    # Standardize the new entry before saving to prevent future space bugs
                     new_clean_key = f"{clean_name}-{year}"
                     
-                    # Save to archive
                     if not os.path.exists(archive_path):
                         with open(archive_path, "w") as f: json.dump({}, f)
                     with open(archive_path, "r+") as f:
@@ -117,32 +98,24 @@ class AIHandler:
             except Exception as e:
                 if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                     print(f"[ALERT]: {model_name} congested. Waiting 5s then swapping...")
-                    time.sleep(5) # Give the server a breather!
+                    time.sleep(5)
                     continue
                 return f"[UPLINK ERROR]: {str(e)}"
-        
         return None
 
     def parse_directive(self, directive_text, nation, turn_number):
         """Analyzes player directives with highly compressed token-optimized history."""
-        
-        # --- CONTEXT COMPRESSION ENGINE ---
         history_text = "No prior history."
         if nation.history:
             compressed_turns = []
-            # Only pull the last 3 years to save massive amounts of tokens
             for turn in nation.history[-3:]: 
-                # We use .get() so it doesn't crash if an old save doesn't have these exact keys yet
                 year = turn.get('year', 'Unknown Year')
                 summary = turn.get('summary', 'General governance.')
                 law_impact = turn.get('law_impact', 'Maintained status quo.')
                 event = turn.get('event', 'No major global events.')
                 stats = turn.get('stats', 'Negligible changes.')
-                
-                # The ultra-dense, token-saving format you requested
                 turn_str = f"[{year}] Summary: {summary} | Law/Impact: {law_impact} | Event: {event} | Stats: {stats}"
                 compressed_turns.append(turn_str)
-            
             history_text = "\n".join(compressed_turns)
 
         system_prompt = f"""
@@ -169,30 +142,68 @@ class AIHandler:
             except Exception as e:
                 if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                     print(f"[ALERT]: {model_name} congested. Waiting 5s then swapping...")
-                    time.sleep(5) # Give the server a breather!
+                    time.sleep(5) 
                     continue
                 return f"[UPLINK ERROR]: {str(e)}"
         
         return "[SYSTEM ERROR]: Maximum retries reached. The AI Cabinet is unavailable."
     
-
     def run_espionage(self, player_nation, target_nation, operation_details, turn_number):
         """Handles covert operations narrative."""
-        system_prompt = f"Director of Intelligence report for {player_nation.name} against {target_nation}..."
+        system_prompt = f"Director of Intelligence report for {player_nation.name} against {target_nation}. Operation details: {operation_details}"
         
-        try:
-            response = self.client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=system_prompt,
-                config=types.GenerateContentConfig(safety_settings=safety_settings)
-            )
-            return response.text.strip()
-        except Exception as e:
-            return f"[INTELLIGENCE ERROR]: {str(e)}"
+        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
+            try:
+                response = self.client.models.generate_content(
+                    model=model_name,
+                    contents=system_prompt,
+                    config=types.GenerateContentConfig(safety_settings=safety_settings)
+                )
+                return response.text.strip()
+            except Exception as e:
+                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    print(f"\n[SYSTEM LOG]: {model_name} overloaded. Swapping models...")
+                    time.sleep(2)
+                    continue
+                return f"[INTELLIGENCE ERROR]: {str(e)}"
+        return "[INTELLIGENCE ERROR]: Operatives unreachable due to communication blackout."
+
+    def negotiate(self, player_nation_name, target_nation, player_message, chat_history):
+        """Acts as a foreign delegate for diplomatic negotiations."""
+        history_text = ""
+        for sender, msg in chat_history:
+            history_text += f"{sender}: {msg}\n"
+            
+        system_prompt = f"""
+        You are the Chief Diplomat representing {target_nation}.
+        You are currently in a secure negotiation with the Supreme Leader of {player_nation_name}.
         
+        Previous Conversation Context:
+        {history_text}
+        
+        Supreme Leader of {player_nation_name} says: "{player_message}"
+        
+        Respond in character as the diplomat of {target_nation}. Be strategic, realistic, and protective of your own nation's interests. Keep the response to 1 or 2 paragraphs.
+        """
+        
+        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
+            try:
+                response = self.client.models.generate_content(
+                    model=model_name,
+                    contents=system_prompt,
+                    config=types.GenerateContentConfig(safety_settings=safety_settings)
+                )
+                return response.text.strip()
+            except Exception as e:
+                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    print(f"\n[SYSTEM LOG]: {model_name} overloaded. Swapping models...")
+                    time.sleep(2)
+                    continue
+                return f"[COMMUNICATIONS SEVERED]: {str(e)}"
+        return "[COMMUNICATIONS SEVERED]: The foreign delegation is unreachable."
 
     def generate_event(self, nation, year):
-        """Generates a significant historical event with auto-retry for API rate limits."""
+        """Generates a significant historical event with model failover."""
         if year >= 2026: return None
         
         system_prompt = f"""
@@ -208,12 +219,10 @@ class AIHandler:
         [Stat Name]: [Change, e.g., -5% or +10.0]
         """
         
-        max_retries = 2
-        for attempt in range(max_retries):
+        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
             try:
-                # We stick to the primary model here, as events need good historical context
                 response = self.client.models.generate_content(
-                    model='gemini-2.0-flash',
+                    model=model_name,
                     contents=system_prompt,
                     config=types.GenerateContentConfig(safety_settings=safety_settings)
                 )
@@ -221,10 +230,9 @@ class AIHandler:
                 
             except Exception as e:
                 error_msg = str(e)
-                # If Google tells us to wait, we actually wait!
                 if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
-                    print(f"\n[SYSTEM LOG]: Global Event API overloaded. Waiting 50 seconds before retrying...")
-                    time.sleep(50) # The API specifically requested a ~48s wait
+                    print(f"\n[SYSTEM LOG]: {model_name} overloaded. Swapping models...")
+                    time.sleep(2)
                     continue
                 else:
                     return f"[HISTORICAL CHRONICLER ERROR]: {error_msg}"
