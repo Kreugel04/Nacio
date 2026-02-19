@@ -4,26 +4,45 @@ import time
 import os
 import re
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
-
-# Define custom safety thresholds 
-safety_settings = [
-    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
-    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
-    types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-    types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_ONLY_HIGH"),
-]
+from openai import OpenAI, RateLimitError
 
 class AIHandler:
     def __init__(self):
-        """Initializes the AI connection using the API key from the .env file."""
+        """Initializes the AI connection using OpenRouter via the OpenAI SDK."""
         load_dotenv()
-        api_key = os.getenv("GEMINI_API_KEY")
+        
+        api_key = os.getenv("OPENROUTER_API_KEY") 
         if not api_key:
-            raise ValueError("API Key not found! Please check your .env file.")
-        self.client = genai.Client(api_key=api_key)
-    
+            raise ValueError("OpenRouter API Key not found! Please check your .env file.")
+        
+        self.client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key,
+        )
+        
+        # The exact Aurora Alpha Model ID
+        self.model_name = "openrouter/aurora-alpha" 
+
+    def _call_api(self, prompt, retries=2):
+        """A centralized helper method to handle API calls, rate limits, and errors cleanly."""
+        for attempt in range(retries):
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.7
+                )
+                return response.choices[0].message.content.strip()
+                
+            except RateLimitError:
+                print(f"\n[SYSTEM LOG]: Aurora API rate limit hit. Waiting 5 seconds...")
+                time.sleep(5)
+                continue
+            except Exception as e:
+                return f"[UPLINK ERROR]: {str(e)}"
+                
+        return "[SYSTEM ERROR]: Maximum retries reached. The AI Cabinet is unavailable."
+
     def generate_starting_nation(self, country_name, year):
         """Asks the AI for stats, with key normalization and world rank failovers."""
         archive_path = "historical_archive.json"
@@ -49,6 +68,9 @@ class AIHandler:
                         data["world_gdp"] = {"United States": 10000.0, "China": 1000.0, "Japan": 5000.0}
                     if "world_military" not in data:
                         data["world_military"] = {"United States": 950.0, "Russia": 800.0, "China": 700.0}
+                    if "tech_level" not in data: data["tech_level"] = 1
+                    if "industrialization_level" not in data: data["industrialization_level"] = 1
+                    if "regional_neighbors" not in data: data["regional_neighbors"] = {}
                     return data
 
         print(f"[SYSTEM LOG]: {lookup_key} not in archives. Requesting AI generation...")
@@ -68,41 +90,38 @@ class AIHandler:
             "gdp": [float, in billions USD],
             "military_strength": [float, 0-1000 scale],
             "political_stability": [float, 0-100 scale],
+            "industrialization_level": [integer 1-5 based on year and history],
+            "tech_level": [integer 1-5 based on year and history],
             "briefing": "[narrative text]",
+            "regional_neighbors": {{"Neighboring Country Name": [float, their military strength 0-1000 scale]}},
             "world_gdp": {{"Country": value}},
             "world_military": {{"Country": value}}
         }}
         """
         
-        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
+        response_text = self._call_api(system_prompt)
+        
+        if "[UPLINK ERROR]" in response_text or "[SYSTEM ERROR]" in response_text:
+            return response_text
+            
+        match = re.search(r'(\{.*\})', response_text, re.DOTALL)
+        if match:
             try:
-                print(f"[SYSTEM LOG]: Attempting generation with {model_name}...")
-                response = self.client.models.generate_content(
-                    model=model_name,
-                    contents=system_prompt,
-                    config=types.GenerateContentConfig(safety_settings=safety_settings)
-                )
+                data = json.loads(match.group(1))
+                new_clean_key = f"{clean_name}-{year}"
                 
-                match = re.search(r'(\{.*\})', response.text, re.DOTALL)
-                if match:
-                    data = json.loads(match.group(1))
-                    new_clean_key = f"{clean_name}-{year}"
-                    
-                    if not os.path.exists(archive_path):
-                        with open(archive_path, "w") as f: json.dump({}, f)
-                    with open(archive_path, "r+") as f:
-                        archive = json.load(f)
-                        archive[new_clean_key] = data
-                        f.seek(0); json.dump(archive, f, indent=4); f.truncate()
-                    
-                    return data
-            except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    print(f"[ALERT]: {model_name} congested. Waiting 5s then swapping...")
-                    time.sleep(5)
-                    continue
-                return f"[UPLINK ERROR]: {str(e)}"
-        return None
+                if not os.path.exists(archive_path):
+                    with open(archive_path, "w") as f: json.dump({}, f)
+                with open(archive_path, "r+") as f:
+                    archive = json.load(f)
+                    archive[new_clean_key] = data
+                    f.seek(0); json.dump(archive, f, indent=4); f.truncate()
+                
+                return data
+            except json.JSONDecodeError:
+                return "[SYSTEM ERROR]: The AI provided an invalid data format."
+                
+        return "[SYSTEM ERROR]: Failed to extract data from the AI response."
 
     def parse_directive(self, directive_text, nation, turn_number):
         """Analyzes player directives with highly compressed token-optimized history."""
@@ -129,45 +148,37 @@ class AIHandler:
         New Directive: "{directive_text}"
         
         Analyze outcomes and statistical updates (Population, GDP, Treasury, Military Strength, Stability, Approval).
-        Format the response clearly using Markdown.
-        """    
-        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
-            try:
-                response = self.client.models.generate_content(
-                    model=model_name,
-                    contents=system_prompt,
-                    config=types.GenerateContentConfig(safety_settings=safety_settings)
-                )
-                if response.text:
-                    return response.text.strip()
-            except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    print(f"[ALERT]: {model_name} congested. Waiting 5s then swapping...")
-                    time.sleep(5) 
-                    continue
-                return f"[UPLINK ERROR]: {str(e)}"
         
-        return "[SYSTEM ERROR]: Maximum retries reached. The AI Cabinet is unavailable."
+        CRITICAL INSTRUCTION: You MUST respond in pure Markdown text. DO NOT output JSON, dictionaries, or code blocks.
+        
+        Use this EXACT format:
+        ### Directive Analysis: [Short Title]
+        
+        **Narrative Impact:** [2-3 paragraphs explaining the political, economic, and social effects of the directive in a realistic, historical tone.]
+        
+        **Cabinet Reaction:**
+        * **[Related Government Department]:** [Generate a reaction from a department depending on the context]
+        
+        **Global Reactions:**
+        * **[Relevant Historical Nation]:** [Generate a diplomatic reaction based on the era]
+        * **[Relevant Historical Faction/Alliance]:** [Generate a diplomatic response based on the era]
+        
+        **Statistical Impact:**
+        * **Population:** [Change, e.g., +10000 or No Change]
+        * **GDP:** [Change, e.g., +$1.5B or -$500M]
+        * **Treasury:** [Change, e.g., -$2.0B or +$100M]
+        * **Military Strength:** [Change, e.g., +10.0 or -5.0]
+        * **Political Stability:** [Change, e.g., +5% or -2%]
+        * **Public Approval:** [Change, e.g., +10% or -15%]
+        * **Tech Level:** [Change, e.g., +1 or No Change]
+        * **Ind Level:** [Change, e.g., +1 or No Change]
+        """
+        return self._call_api(system_prompt)
     
     def run_espionage(self, player_nation, target_nation, operation_details, turn_number):
         """Handles covert operations narrative."""
         system_prompt = f"Director of Intelligence report for {player_nation.name} against {target_nation}. Operation details: {operation_details}"
-        
-        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
-            try:
-                response = self.client.models.generate_content(
-                    model=model_name,
-                    contents=system_prompt,
-                    config=types.GenerateContentConfig(safety_settings=safety_settings)
-                )
-                return response.text.strip()
-            except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    print(f"\n[SYSTEM LOG]: {model_name} overloaded. Swapping models...")
-                    time.sleep(2)
-                    continue
-                return f"[INTELLIGENCE ERROR]: {str(e)}"
-        return "[INTELLIGENCE ERROR]: Operatives unreachable due to communication blackout."
+        return self._call_api(system_prompt)
 
     def negotiate(self, player_nation_name, target_nation, player_message, chat_history):
         """Acts as a foreign delegate for diplomatic negotiations."""
@@ -186,25 +197,10 @@ class AIHandler:
         
         Respond in character as the diplomat of {target_nation}. Be strategic, realistic, and protective of your own nation's interests. Keep the response to 1 or 2 paragraphs.
         """
-        
-        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
-            try:
-                response = self.client.models.generate_content(
-                    model=model_name,
-                    contents=system_prompt,
-                    config=types.GenerateContentConfig(safety_settings=safety_settings)
-                )
-                return response.text.strip()
-            except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    print(f"\n[SYSTEM LOG]: {model_name} overloaded. Swapping models...")
-                    time.sleep(2)
-                    continue
-                return f"[COMMUNICATIONS SEVERED]: {str(e)}"
-        return "[COMMUNICATIONS SEVERED]: The foreign delegation is unreachable."
+        return self._call_api(system_prompt)
 
     def generate_event(self, nation, year):
-        """Generates a significant historical event with model failover."""
+        """Generates a significant historical event."""
         if year >= 2026: return None
         
         system_prompt = f"""
@@ -219,23 +215,28 @@ class AIHandler:
         Statistical Updates:
         [Stat Name]: [Change, e.g., -5% or +10.0]
         """
+        response_text = self._call_api(system_prompt)
         
-        for model_name in ['gemini-2.5-flash', 'gemini-2.0-flash']:
-            try:
-                response = self.client.models.generate_content(
-                    model=model_name,
-                    contents=system_prompt,
-                    config=types.GenerateContentConfig(safety_settings=safety_settings)
-                )
-                return response.text.strip()
-                
-            except Exception as e:
-                error_msg = str(e)
-                if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
-                    print(f"\n[SYSTEM LOG]: {model_name} overloaded. Swapping models...")
-                    time.sleep(2)
-                    continue
-                else:
-                    return f"[HISTORICAL CHRONICLER ERROR]: {error_msg}"
-                    
-        return "### GLOBAL EVENT DELAYED\nDue to dense fog of war and global communications gridlock, this year's historical events remain unrecorded. The simulation continues."
+        if "[UPLINK ERROR]" in response_text or "[SYSTEM ERROR]" in response_text:
+            return "### GLOBAL EVENT DELAYED\nDue to dense fog of war and global communications gridlock, this year's historical events remain unrecorded. The simulation continues."
+            
+        return response_text
+
+    def generate_war_report(self, player_nation, target_nation, war_results, current_year):
+        """Takes Python's deterministic math and writes a narrative battlefield report, locked to the current game year."""
+        system_prompt = f"""
+        You are the Supreme Commander of {player_nation}'s Armed Forces in the year {current_year}.
+        
+        We have just engaged in a massive war against {target_nation}.
+        Here is the mathematically determined outcome from the simulation engine:
+        - Result: {war_results['result']}
+        - Our Combat Power on the field: {war_results['player_power']}
+        - Enemy Combat Power on the field: {war_results['enemy_power']}
+        - Treasury Cost: ${war_results['cost_billions']:.2f} Billion
+        
+        Write a thrilling, realistic 2-paragraph military After Action Report (AAR) summarizing the campaign, the tactics used, and the aftermath. 
+        
+        CRITICAL: Ensure all dates in the report match the year {current_year}. Frame the narrative to match the {war_results['result']} using military terminology appropriate for the year {current_year}.
+        CRITICAL: Output ONLY pure Markdown text. Do NOT output JSON.
+        """
+        return self._call_api(system_prompt)
